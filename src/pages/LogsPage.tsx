@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient.ts';
 import DataTable from '../components/DataTable';
 import ConsoleLog from '../components/ConsoleLog';
 import Toast from '../components/Toast';
@@ -12,8 +12,8 @@ export default function LogsPage() {
     old_marks: '',
     new_marks: '',
   });
-  const [results, setResults] = useState([]);
-  const [logData, setLogData] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
+  const [logData, setLogData] = useState<any[]>([]);
   const [consoleLogs, setConsoleLogs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -107,7 +107,7 @@ export default function LogsPage() {
 
     if (allRecords && allRecords.length > 0) {
       const recordsToDelete = allRecords.slice(0, Math.ceil(allRecords.length / 2));
-      const idsToDelete = recordsToDelete.map(r => r.id);
+      const idsToDelete = recordsToDelete.map((r: { id: number }) => r.id);
 
       await supabase.from('student_results').delete().in('id', idsToDelete);
 
@@ -196,6 +196,13 @@ export default function LogsPage() {
                 <li>Enables UNDO of uncommitted transactions</li>
                 <li>Essential for crash recovery and data consistency</li>
               </ul>
+              <div className="mt-4 p-4 bg-slate-700 rounded-lg">
+                <h3 className="text-white font-semibold mb-2">Real-World Example:</h3>
+                <p className="text-slate-300">Similar to a bank's transaction record. When you make multiple ATM transactions,
+                  the bank keeps a log of each action (withdraw $100, deposit $50, etc.). If the ATM crashes mid-transaction,
+                  the bank can look at these logs to figure out exactly what happened and fix any incomplete transactions.
+                  Here, we log every grade change to ensure no student's updated marks are lost during a system crash.</p>
+              </div>
             </div>
           </div>
 
@@ -238,30 +245,39 @@ export default function LogsPage() {
         <div className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700 mb-8">
           <h2 className="text-2xl font-bold text-cyan-400 mb-4">Operations</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <button
-              onClick={handleViewLogs}
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <FileText className="h-5 w-5" />
-              View Logs
-            </button>
-            <button
-              onClick={handleSimulateCrash}
-              disabled={loading}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <AlertTriangle className="h-5 w-5" />
-              Simulate Crash
-            </button>
-            <button
-              onClick={handleRecoverFromLogs}
-              disabled={loading}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <RotateCcw className="h-5 w-5" />
-              Recover From Logs
-            </button>
+            <div>
+              <button
+                onClick={handleViewLogs}
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <FileText className="h-5 w-5" />
+                View Logs
+              </button>
+              <p className="text-sm text-slate-400">Displays all transaction logs showing changes to student marks</p>
+            </div>
+            <div>
+              <button
+                onClick={handleSimulateCrash}
+                disabled={loading}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <AlertTriangle className="h-5 w-5" />
+                Simulate Crash
+              </button>
+              <p className="text-sm text-slate-400">Simulates system failure by deleting half of the database records</p>
+            </div>
+            <div>
+              <button
+                onClick={handleRecoverFromLogs}
+                disabled={loading}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <RotateCcw className="h-5 w-5" />
+                Recover From Logs
+              </button>
+              <p className="text-sm text-slate-400">Restores database by replaying committed transactions from logs</p>
+            </div>
           </div>
           <ConsoleLog logs={consoleLogs} />
         </div>
@@ -277,7 +293,16 @@ export default function LogsPage() {
             {loading ? <Loader /> : <DataTable data={logData.slice(0, 10)} columns={logsColumns} />}
           </div>
         </div>
+
+        <div className="mt-8">
+          <img
+            src="/log-based-recovery.jpg"
+            alt="Log-Based Recovery Diagram"
+            className="w-full h-auto rounded-lg shadow-lg"
+          />
+        </div>
       </div>
     </div>
   );
 }
+

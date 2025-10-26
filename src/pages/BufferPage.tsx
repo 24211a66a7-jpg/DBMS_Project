@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient.ts';
 import DataTable from '../components/DataTable';
 import Toast from '../components/Toast';
 import Loader from '../components/Loader';
 import { Database, Cpu, Trash2, ArrowRight } from 'lucide-react';
 
 export default function BufferPage() {
-  const [diskData, setDiskData] = useState([]);
-  const [bufferData, setBufferData] = useState([]);
+  const [diskData, setDiskData] = useState<any[]>([]);
+  const [bufferData, setBufferData] = useState<any[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -106,6 +106,12 @@ export default function BufferPage() {
                 <li>Improves query performance dramatically</li>
                 <li>Acts as a cache layer between application and storage</li>
               </ul>
+              <div className="mt-4 p-4 bg-slate-700 rounded-lg">
+                <h3 className="text-white font-semibold mb-2">Real-World Example:</h3>
+                <p className="text-slate-300">Think of a shopping mall's directory kiosk. Instead of asking the main office (disk) for store locations every time,
+                  the kiosk keeps frequently requested store locations in its memory (buffer). When someone asks for "Starbucks", it shows the location instantly from memory
+                  instead of calling the main office. Only new or rarely requested stores require checking with the main office.</p>
+              </div>
             </div>
           </div>
 
@@ -142,30 +148,39 @@ export default function BufferPage() {
         <div className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700 mb-8">
           <h2 className="text-2xl font-bold text-cyan-400 mb-4">Operations</h2>
           <div className="grid sm:grid-cols-3 gap-4">
-            <button
-              onClick={handleFetchFromDatabase}
-              disabled={loading}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <Database className="h-5 w-5" />
-              Fetch From Database
-            </button>
-            <button
-              onClick={handleFetchFromBuffer}
-              disabled={bufferData.length === 0}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Cpu className="h-5 w-5" />
-              Fetch From Buffer
-            </button>
-            <button
-              onClick={handleClearBuffer}
-              disabled={bufferData.length === 0}
-              className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Trash2 className="h-5 w-5" />
-              Clear Buffer
-            </button>
+            <div>
+              <button
+                onClick={handleFetchFromDatabase}
+                disabled={loading}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 mb-2"
+              >
+                <Database className="h-5 w-5" />
+                Fetch From Database
+              </button>
+              <p className="text-sm text-slate-400">Loads data from disk storage (slow operation, ~1.5s)</p>
+            </div>
+            <div>
+              <button
+                onClick={handleFetchFromBuffer}
+                disabled={bufferData.length === 0}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mb-2"
+              >
+                <Cpu className="h-5 w-5" />
+                Fetch From Buffer
+              </button>
+              <p className="text-sm text-slate-400">Retrieves data from memory buffer (instant access)</p>
+            </div>
+            <div>
+              <button
+                onClick={handleClearBuffer}
+                disabled={bufferData.length === 0}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mb-2"
+              >
+                <Trash2 className="h-5 w-5" />
+                Clear Buffer
+              </button>
+              <p className="text-sm text-slate-400">Empties the memory buffer, forcing next fetch from disk</p>
+            </div>
           </div>
         </div>
 
@@ -211,9 +226,8 @@ export default function BufferPage() {
             <ArrowRight className={`h-8 w-8 ${loading ? 'text-cyan-400 animate-pulse' : 'text-slate-600'}`} />
 
             <div className="text-center">
-              <div className={`border-2 rounded-lg p-6 mb-2 ${
-                bufferData.length > 0 ? 'bg-green-900 border-green-600' : 'bg-slate-700 border-slate-600'
-              }`}>
+              <div className={`border-2 rounded-lg p-6 mb-2 ${bufferData.length > 0 ? 'bg-green-900 border-green-600' : 'bg-slate-700 border-slate-600'
+                }`}>
                 <Cpu className={`h-12 w-12 mx-auto ${bufferData.length > 0 ? 'text-green-400' : 'text-slate-500'}`} />
               </div>
               <span className="text-white font-semibold">Memory Buffer</span>
@@ -245,6 +259,14 @@ export default function BufferPage() {
               ))
             )}
           </div>
+        </div>
+
+        <div className="mt-8">
+          <img
+            src="/buffermanagement.jpg"
+            alt="Buffer Management Diagram"
+            className="w-full h-auto rounded-lg shadow-lg"
+          />
         </div>
       </div>
     </div>

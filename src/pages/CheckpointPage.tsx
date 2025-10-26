@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient.ts';
 import DataTable from '../components/DataTable';
 import ConsoleLog from '../components/ConsoleLog';
 import Toast from '../components/Toast';
@@ -14,7 +14,7 @@ export default function CheckpointPage() {
     marks: '',
     grade: '',
   });
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -175,6 +175,12 @@ export default function CheckpointPage() {
                 <li>Helps in faster crash recovery</li>
                 <li>Reduces recovery time by establishing known good state</li>
               </ul>
+              <div className="mt-4 p-4 bg-slate-700 rounded-lg">
+                <h3 className="text-white font-semibold mb-2">Real-World Example:</h3>
+                <p className="text-slate-300">Similar to a video game's auto-save feature. While playing a complex game like Skyrim, the game automatically creates checkpoints
+                  after completing major quests. If the game crashes, you don't lose all progress - you can restart from the last checkpoint. In a database, checkpoints work
+                  the same way: they save the current state of all student records, making crash recovery much faster.</p>
+              </div>
             </div>
           </div>
 
@@ -231,30 +237,39 @@ export default function CheckpointPage() {
         <div className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700 mb-8">
           <h2 className="text-2xl font-bold text-cyan-400 mb-4">Operations</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            <button
-              onClick={handleCreateCheckpoint}
-              disabled={loading}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <Save className="h-5 w-5" />
-              Create Checkpoint
-            </button>
-            <button
-              onClick={handleSimulateCrash}
-              disabled={loading}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <AlertTriangle className="h-5 w-5" />
-              Simulate Crash
-            </button>
-            <button
-              onClick={handleRecoverFromCheckpoint}
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <RotateCcw className="h-5 w-5" />
-              Recover From Checkpoint
-            </button>
+            <div>
+              <button
+                onClick={handleCreateCheckpoint}
+                disabled={loading}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <Save className="h-5 w-5" />
+                Create Checkpoint
+              </button>
+              <p className="text-sm text-slate-400">Creates a snapshot of all current data as a safe recovery point</p>
+            </div>
+            <div>
+              <button
+                onClick={handleSimulateCrash}
+                disabled={loading}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <AlertTriangle className="h-5 w-5" />
+                Simulate Crash
+              </button>
+              <p className="text-sm text-slate-400">Simulates a system crash by deleting half of the database records</p>
+            </div>
+            <div>
+              <button
+                onClick={handleRecoverFromCheckpoint}
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <RotateCcw className="h-5 w-5" />
+                Recover From Checkpoint
+              </button>
+              <p className="text-sm text-slate-400">Restores database to the last created checkpoint state</p>
+            </div>
           </div>
           <ConsoleLog logs={logs} />
         </div>
@@ -262,6 +277,14 @@ export default function CheckpointPage() {
         <div className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700">
           <h2 className="text-2xl font-bold text-cyan-400 mb-4">Student Results</h2>
           {loading ? <Loader /> : <DataTable data={results} columns={columns} />}
+        </div>
+
+        <div className="mt-8">
+          <img
+            src="/checkpoint.jpg"
+            alt="Checkpoint Process Diagram"
+            className="w-full h-auto rounded-lg shadow-lg"
+          />
         </div>
       </div>
     </div>

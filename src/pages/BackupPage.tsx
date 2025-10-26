@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient.ts';
 import DataTable from '../components/DataTable';
 import ConsoleLog from '../components/ConsoleLog';
 import Toast from '../components/Toast';
@@ -7,8 +7,8 @@ import Loader from '../components/Loader';
 import { Cloud, AlertTriangle, RotateCcw, Clock } from 'lucide-react';
 
 export default function BackupPage() {
-  const [results, setResults] = useState([]);
-  const [backupData, setBackupData] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
+  const [backupData, setBackupData] = useState<any[]>([]);
   const [lastBackupTime, setLastBackupTime] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -179,6 +179,13 @@ export default function BackupPage() {
                 <li>Enables disaster recovery</li>
                 <li>Last line of defense for data protection</li>
               </ul>
+              <div className="mt-4 p-4 bg-slate-700 rounded-lg">
+                <h3 className="text-white font-semibold mb-2">Real-World Example:</h3>
+                <p className="text-slate-300">Think of Google Photos backing up your phone's pictures. Your photos exist both on your
+                  phone (primary site) and in Google's cloud storage (remote backup). If your phone is lost or damaged, you can still
+                  recover all your photos from the cloud backup. Similarly, we keep a complete copy of all student records at a different
+                  location, so if the main server room has a disaster (fire, flood, etc.), no data is permanently lost.</p>
+              </div>
             </div>
           </div>
 
@@ -219,30 +226,39 @@ export default function BackupPage() {
         <div className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700 mb-8">
           <h2 className="text-2xl font-bold text-cyan-400 mb-4">Operations</h2>
           <div className="grid sm:grid-cols-3 gap-4 mb-6">
-            <button
-              onClick={handleCreateBackup}
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <Cloud className="h-5 w-5" />
-              Create Remote Backup
-            </button>
-            <button
-              onClick={handleSimulateFullCrash}
-              disabled={loading}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <AlertTriangle className="h-5 w-5" />
-              Simulate Full Crash
-            </button>
-            <button
-              onClick={handleRestoreFromBackup}
-              disabled={loading}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <RotateCcw className="h-5 w-5" />
-              Restore From Backup
-            </button>
+            <div>
+              <button
+                onClick={handleCreateBackup}
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <Cloud className="h-5 w-5" />
+                Create Remote Backup
+              </button>
+              <p className="text-sm text-slate-400">Creates a complete backup of database to a remote storage location</p>
+            </div>
+            <div>
+              <button
+                onClick={handleSimulateFullCrash}
+                disabled={loading}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <AlertTriangle className="h-5 w-5" />
+                Simulate Full Crash
+              </button>
+              <p className="text-sm text-slate-400">Simulates complete system failure by wiping all database records</p>
+            </div>
+            <div>
+              <button
+                onClick={handleRestoreFromBackup}
+                disabled={loading}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
+              >
+                <RotateCcw className="h-5 w-5" />
+                Restore From Backup
+              </button>
+              <p className="text-sm text-slate-400">Recovers all data from the most recent remote backup</p>
+            </div>
           </div>
           <ConsoleLog logs={logs} />
         </div>
@@ -251,9 +267,8 @@ export default function BackupPage() {
           <div className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-2xl font-bold text-cyan-400">Main Database</h2>
-              <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                results.length > 0 ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
-              }`}>
+              <div className={`px-3 py-1 rounded-full text-xs font-semibold ${results.length > 0 ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
+                }`}>
                 {results.length > 0 ? 'ONLINE' : 'EMPTY'}
               </div>
             </div>
@@ -264,9 +279,8 @@ export default function BackupPage() {
             <div className="flex items-center gap-2 mb-4">
               <Cloud className="h-6 w-6 text-cyan-400" />
               <h2 className="text-2xl font-bold text-cyan-400">Remote Backup</h2>
-              <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                backupData.length > 0 ? 'bg-blue-900 text-blue-300' : 'bg-slate-700 text-slate-400'
-              }`}>
+              <div className={`px-3 py-1 rounded-full text-xs font-semibold ${backupData.length > 0 ? 'bg-blue-900 text-blue-300' : 'bg-slate-700 text-slate-400'
+                }`}>
                 {backupData.length > 0 ? 'AVAILABLE' : 'NO BACKUP'}
               </div>
             </div>
@@ -278,14 +292,12 @@ export default function BackupPage() {
           <h2 className="text-2xl font-bold text-cyan-400 mb-4">Disaster Recovery Architecture</h2>
           <div className="grid md:grid-cols-3 gap-6 py-6">
             <div className="text-center">
-              <div className={`rounded-lg p-6 mb-3 border-2 ${
-                results.length > 0
-                  ? 'bg-green-900 border-green-600'
-                  : 'bg-red-900 border-red-600'
-              }`}>
-                <Cloud className={`h-16 w-16 mx-auto mb-2 ${
-                  results.length > 0 ? 'text-green-400' : 'text-red-400'
-                }`} />
+              <div className={`rounded-lg p-6 mb-3 border-2 ${results.length > 0
+                ? 'bg-green-900 border-green-600'
+                : 'bg-red-900 border-red-600'
+                }`}>
+                <Cloud className={`h-16 w-16 mx-auto mb-2 ${results.length > 0 ? 'text-green-400' : 'text-red-400'
+                  }`} />
                 <div className="text-white font-bold text-lg">Primary Site</div>
                 <div className="text-xs text-slate-300 mt-1">{results.length} records</div>
               </div>
@@ -300,14 +312,12 @@ export default function BackupPage() {
             </div>
 
             <div className="text-center">
-              <div className={`rounded-lg p-6 mb-3 border-2 ${
-                backupData.length > 0
-                  ? 'bg-blue-900 border-blue-600'
-                  : 'bg-slate-700 border-slate-600'
-              }`}>
-                <Cloud className={`h-16 w-16 mx-auto mb-2 ${
-                  backupData.length > 0 ? 'text-blue-400' : 'text-slate-500'
-                }`} />
+              <div className={`rounded-lg p-6 mb-3 border-2 ${backupData.length > 0
+                ? 'bg-blue-900 border-blue-600'
+                : 'bg-slate-700 border-slate-600'
+                }`}>
+                <Cloud className={`h-16 w-16 mx-auto mb-2 ${backupData.length > 0 ? 'text-blue-400' : 'text-slate-500'
+                  }`} />
                 <div className="text-white font-bold text-lg">Remote Site</div>
                 <div className="text-xs text-slate-300 mt-1">{backupData.length} records</div>
               </div>
@@ -315,7 +325,17 @@ export default function BackupPage() {
             </div>
           </div>
         </div>
+
+        <div className="mt-8">
+          <img
+            src="/remote-backup-system.jpg"
+            alt="Remote Backup System Diagram"
+            className="w-full h-auto rounded-lg shadow-lg"
+          />
+        </div>
       </div>
     </div>
   );
 }
+
+
