@@ -11,25 +11,25 @@ This app is intended as a learning/demo tool to show how different recovery stra
 - React (with functional components + hooks),
 - TypeScript,
 - Vite (dev server + build),
--TailwindCSS,
--State management via local component state 
+- TailwindCSS,
+- State management via local component state 
 
 # Backend / Storage:
--Supabase (PostgreSQL + Auth + Storage),
--Supabase JavaScript Client,
--SQL migrations for deterministic schema setup
+- Supabase (PostgreSQL + Auth + Storage),
+- Supabase JavaScript Client,
+- SQL migrations for deterministic schema setup
 
 # Infrastructure:
--Vercel (frontend hosting),
--Supabase cloud backend,
--Environment variables via Vite (VITE_*)
+- Vercel (frontend hosting),
+- Supabase cloud backend,
+- Environment variables via Vite (VITE_*)
 
 # Development Tools:
--Node.js 18+,
--npm,
--Git + GitHub for version control,
--TypeScript compiler,
--ESLint + Prettier (if configured — keep only if present),
+- Node.js 18+,
+- npm,
+- Git + GitHub for version control,
+- TypeScript compiler,
+- ESLint + Prettier (if configured — keep only if present),
 
 ## Contents
 
