@@ -8,9 +8,9 @@ This app is intended as a learning/demo tool to show how different recovery stra
 ## Tech Stack
 
 # Frontend:
--React (with functional components + hooks),
--TypeScript,
--Vite (dev server + build),
+- React (with functional components + hooks),
+- TypeScript,
+- Vite (dev server + build),
 -TailwindCSS,
 -State management via local component state 
 
